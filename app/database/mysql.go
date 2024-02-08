@@ -1,6 +1,12 @@
 package database
 
 import (
+	carts "store/features/carts/model"
+	categories "store/features/categories/model"
+	customers "store/features/customers/model"
+	orders "store/features/orders/model"
+	products "store/features/products/model"
+
 	"fmt"
 	"store/app/configs"
 
@@ -22,6 +28,10 @@ func InitDBMysql(cfg *configs.AppConfig) *gorm.DB {
 	return db
 }
 
-func InitMigration(db *gorm.DB){
-	
+func InitMigration(db *gorm.DB) {
+	db.AutoMigrate(&carts.Carts{})
+	db.AutoMigrate(categories.Categories{})
+	db.AutoMigrate(customers.Customers{})
+	db.AutoMigrate(orders.Orders{})
+	db.AutoMigrate(products.Products{})
 }
