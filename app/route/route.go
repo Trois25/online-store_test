@@ -7,6 +7,8 @@ import (
 
 func New(e *echo.Echo, db *gorm.DB) {
 	loginPage := e.Group("/")
+	category := e.Group("/category")
 
 	RouteCustomer(db, loginPage)
+	RouteCategory(db, category)
 }
