@@ -64,6 +64,20 @@ func (handler *ProductController) ReadAllProductByCategory(c echo.Context) error
 	})
 }
 
+func (handler *ProductController) ReadAllProduct(c echo.Context) error {
+	data, err := handler.productUseCase.ReadAllProduct()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get all product",
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]any{
+		"message": "get all product",
+		"data":    data,
+	})
+}
+
 func (handler *ProductController) DeleteProduct(c echo.Context) error {
 	idParams := c.Param("id")
 	err := handler.productUseCase.DeleteProduct(idParams)
@@ -75,5 +89,21 @@ func (handler *ProductController) DeleteProduct(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "product deleted successfully",
+	})
+}
+
+func (handler *ProductController) GetProductByID(c echo.Context) error {
+	Id := c.Param("id")
+
+	data, err := handler.productUseCase.GetProductByID(Id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get product",
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]any{
+		"message": "get product",
+		"data":    data,
 	})
 }

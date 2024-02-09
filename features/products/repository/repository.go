@@ -77,3 +77,41 @@ func (productRep *productRepository) ReadAllProductByCategory(categoryId int) ([
 	}
 	return mapData, nil
 }
+
+// ReadAllProduct implements entity.ProductDataInterface.
+func (productRep *productRepository) ReadAllProduct() ([]products.ProductCore, error) {
+	var dataProduct []model.Products
+
+	errData := productRep.db.Find(&dataProduct).Error
+	if errData != nil {
+		return nil, errData
+	}
+
+	mapData := make([]products.ProductCore, len(dataProduct))
+	for i, value := range dataProduct {
+		mapData[i] = products.ProductCore{
+			ID:         value.ID.String(),
+			Product:    value.Product,
+			Price:      value.Price,
+			CategoryId: value.CategoryId,
+		}
+	}
+	return mapData, nil
+}
+
+// GetProductByID implements entity.ProductDataInterface.
+func (productRepo *productRepository) GetProductByID(id string) (products.ProductCore, error) {
+	var product model.Products
+
+	err := productRepo.db.Where("id = ?", id).First(&product).Error
+	if err != nil {
+		return products.ProductCore{}, err
+	}
+
+	ProductCore := products.ProductCore{
+		Product: product.Product,
+		Price:   product.Price,
+	}
+
+	return ProductCore, nil
+}

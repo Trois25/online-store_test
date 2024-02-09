@@ -9,8 +9,10 @@ func New(e *echo.Echo, db *gorm.DB) {
 	loginPage := e.Group("/")
 	category := e.Group("/category")
 	product := e.Group("/product")
+	cart := e.Group("/cart")
 
 	RouteCustomer(db, loginPage)
 	RouteCategory(db, category)
 	RouteProduct(db, product)
+	RouteCart(db, cart)
 }
