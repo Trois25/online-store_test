@@ -121,3 +121,23 @@ func convertToCartProductCore(productId string, productUseCase producte.ProductU
 		Price:   productInfo.Price,
 	}
 }
+
+// GetSpecificCart implements entity.CartRepositoryInterface.
+func (cartRepo *cartRepository) GetSpecificCart(userId string, id string) (entity.CartsCore, error) {
+	var cart model.Carts
+
+	err := cartRepo.db.Where("id = ?", id).First(&cart).Error
+	if err != nil {
+		return entity.CartsCore{}, err
+	}
+
+	CartCore := entity.CartsCore{
+		ID:         cart.ID.String(),
+		CustomerId: userId,
+		ProductId:  cart.ProductId,
+		Quantity:   cart.Quantity,
+		Products:   convertToCartProductCore(cart.ProductId, cartRepo.product),
+	}
+
+	return CartCore, nil
+}

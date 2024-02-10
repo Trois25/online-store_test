@@ -25,7 +25,7 @@ func (cart *cartService) AddCartProduct(cartInput entity.CartsCore, userId strin
 		return errors.New("product id can't empty")
 	}
 
-	if cartInput.Quantity < 0{
+	if cartInput.Quantity < 0 {
 		return errors.New("product must be more than 0")
 	}
 
@@ -58,4 +58,22 @@ func (cart *cartService) GetAllCartProduct(userId string) ([]entity.CartsCore, e
 		return nil, errors.New("error get data")
 	}
 	return products, nil
+}
+
+// GetSpecificCart implements entity.CartServiceInterface.
+func (cart *cartService) GetSpecificCart(userId string, id string) (entity.CartsCore, error) {
+	if id == "" {
+		return entity.CartsCore{}, errors.New("id invalid")
+	}
+
+	if userId == "" {
+		return entity.CartsCore{}, errors.New("you need to login first")
+	}
+
+	cartData, err := cart.cartRepository.GetSpecificCart(userId, id)
+	if err != nil {
+		return entity.CartsCore{}, errors.New("can't read data")
+	}
+
+	return cartData, nil
 }

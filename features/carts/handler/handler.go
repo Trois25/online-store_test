@@ -93,3 +93,26 @@ func (handler *cartHandler) GetAllCartProduct(e echo.Context) error {
 		"data":    data,
 	})
 }
+
+func (handler *cartHandler) GetSpecificCart(e echo.Context) error {
+
+	Id := middlewares.ExtractTokenUserId(e)
+	if Id == "" {
+		return e.JSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "failed to get id",
+		})
+	}
+	cartId := e.Param("id")
+
+	data, err := handler.cartService.GetSpecificCart(Id, cartId)
+	if err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]any{
+			"message": "error get cart",
+		})
+	}
+
+	return e.JSON(http.StatusOK, map[string]any{
+		"message": "get cart",
+		"data":    data,
+	})
+}
