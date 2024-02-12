@@ -45,8 +45,6 @@ func (paymentRepo *paymentRepository) PayOrder(userId string, orderId string, da
 		PaymentTotal: data.PaymentTotal,
 	}
 
-
-
 	if orderData.TotalPrice == data.PaymentTotal {
 
 		paymentRepo.order.EditOrder(userId, orderId)
