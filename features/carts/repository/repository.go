@@ -112,16 +112,6 @@ func (cartRepo *cartRepository) GetAllCartProduct(userId string) ([]entity.Carts
 	return mapData, nil
 }
 
-// convertToCartProductCore mengambil informasi produk dan mengkonversinya ke dalam bentuk CartProductCore.
-func convertToCartProductCore(productId string, productUseCase producte.ProductUseCaseInterface) entity.CartProductCore {
-	productInfo, _ := productUseCase.GetProductByID(productId)
-
-	return entity.CartProductCore{
-		Product: productInfo.Product,
-		Price:   productInfo.Price,
-	}
-}
-
 // GetSpecificCart implements entity.CartRepositoryInterface.
 func (cartRepo *cartRepository) GetSpecificCart(userId string, id string) (entity.CartsCore, error) {
 	var cart model.Carts
@@ -140,4 +130,13 @@ func (cartRepo *cartRepository) GetSpecificCart(userId string, id string) (entit
 	}
 
 	return CartCore, nil
+}
+
+func convertToCartProductCore(productId string, productUseCase producte.ProductUseCaseInterface) entity.CartProductCore {
+	productInfo, _ := productUseCase.GetProductByID(productId)
+
+	return entity.CartProductCore{
+		Product: productInfo.Product,
+		Price:   productInfo.Price,
+	}
 }

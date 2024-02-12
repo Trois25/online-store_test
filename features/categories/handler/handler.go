@@ -18,12 +18,12 @@ func New(categoryUC categories.CategoryUseCaseInterface) *categoryController {
 	}
 }
 
-func (handler *categoryController) CreateCategory(c echo.Context) error {
+func (handler *categoryController) CreateCategory(e echo.Context) error {
 
 	input := new(CategoryRequest)
-	errBind := c.Bind(&input)
+	errBind := e.Bind(&input)
 	if errBind != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{
+		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "error bind data",
 		})
 	}
@@ -34,56 +34,56 @@ func (handler *categoryController) CreateCategory(c echo.Context) error {
 
 	errcategory := handler.categoryUseCase.CreateCategory(data)
 	if errcategory != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{
+		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "error create category",
-			"error" : errcategory.Error(),
+			"error":   errcategory.Error(),
 		})
 	}
 
-	return c.JSON(http.StatusOK, map[string]any{
+	return e.JSON(http.StatusOK, map[string]any{
 		"message": "success create category",
 	})
 }
 
-func (handler *categoryController) ReadAllCategory(c echo.Context) error {
+func (handler *categoryController) ReadAllCategory(e echo.Context) error {
 
 	data, err := handler.categoryUseCase.ReadAllCategory()
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{
+		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "error get all category",
 		})
 	}
 
-	return c.JSON(http.StatusOK, map[string]any{
+	return e.JSON(http.StatusOK, map[string]any{
 		"message": "get all category",
 		"data":    data,
 	})
 }
 
-func (handler *categoryController) DeleteCategory(c echo.Context) error {
+func (handler *categoryController) DeleteCategory(e echo.Context) error {
 
-	idParams := c.Param("id")
+	idParams := e.Param("id")
 	if idParams == "" {
-		return c.JSON(http.StatusBadRequest, map[string]any{
+		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "id can't empty",
 		})
 	}
 
 	inputId, errParse := strconv.ParseUint(idParams, 10, 64)
 	if errParse != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{
+		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "failed delete role",
 		})
 	}
 
 	err := handler.categoryUseCase.DeleteCategory(inputId)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]any{
+		return e.JSON(http.StatusBadRequest, map[string]any{
 			"message": "failed delete category",
 		})
 	}
 
-	return c.JSON(http.StatusOK, map[string]any{
+	return e.JSON(http.StatusOK, map[string]any{
 		"message": "success delete data",
 	})
 }

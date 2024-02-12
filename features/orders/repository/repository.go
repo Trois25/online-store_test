@@ -1,10 +1,12 @@
 package repository
 
 import (
+	"errors"
 	carte "store/features/carts/entity"
 	"store/features/orders/entity"
 	"store/features/orders/model"
 	producte "store/features/products/entity"
+	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -54,7 +56,6 @@ func (orderRepo *orderRepository) AddOrder(userId string, cartId string) error {
 		TotalPrice: totalPrice,
 	}
 
-	
 	txDel := orderRepo.cart.DeleteCartProduct(cartId, userId)
 	if txDel != nil {
 		return txDel
@@ -69,3 +70,60 @@ func (orderRepo *orderRepository) AddOrder(userId string, cartId string) error {
 	return nil
 }
 
+// GetSpecificOrder implements entity.OrderRepositoryInterface.
+func (orderRepo *orderRepository) GetSpecificOrder(userId string, orderId string) (entity.OrdersCore, error) {
+	var order model.Orders
+
+	err := orderRepo.db.Where("id = ?", orderId).First(&order).Error
+	if err != nil {
+		return entity.OrdersCore{}, err
+	}
+
+	orderCore := entity.OrdersCore{
+		ID:         order.ID.String(),
+		UserId:     userId,
+		CartId:     order.CartId,
+		TotalPrice: order.TotalPrice,
+	}
+
+	return orderCore, nil
+}
+
+// EditOrder implements entity.OrderRepositoryInterface.
+func (orderRepo *orderRepository) EditOrder(userId string, orderId string) error {
+
+	var orderData model.Orders
+	errData := orderRepo.db.Where("id = ?", orderId).First(&orderData).Error
+	if errData != nil {
+		if errors.Is(errData, gorm.ErrRecordNotFound) {
+			return errors.New("record not found")
+		}
+		return errData
+	}
+
+	uuidID, err := uuid.Parse(orderId)
+	if err != nil {
+		return err
+	}
+
+	orderData.ID = uuidID
+	orderData.PaymentStatus = "Paid"
+	orderData.UpdatedAt = time.Now()
+
+	var update = model.Orders{
+		ID:            orderData.ID,
+		UserId:        orderData.UserId,
+		CartId:        orderData.CartId,
+		PaymentStatus: orderData.PaymentStatus,
+		TotalPrice:    orderData.TotalPrice,
+		UpdatedAt:     orderData.UpdatedAt,
+		CreatedAt: orderData.CreatedAt,
+	}
+
+	errSave := orderRepo.db.Save(&update)
+	if errData != nil {
+		return errSave.Error
+	}
+
+	return nil
+}

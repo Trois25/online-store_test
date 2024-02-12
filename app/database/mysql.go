@@ -6,6 +6,7 @@ import (
 	customers "store/features/customers/model"
 	orders "store/features/orders/model"
 	products "store/features/products/model"
+	payment "store/features/payment/model"
 
 	"fmt"
 	"store/app/configs"
@@ -34,4 +35,5 @@ func InitMigration(db *gorm.DB) {
 	db.AutoMigrate(customers.Customers{})
 	db.AutoMigrate(orders.Orders{})
 	db.AutoMigrate(products.Products{})
+	db.AutoMigrate(payment.Payment{})
 }
